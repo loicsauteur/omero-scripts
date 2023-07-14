@@ -151,6 +151,9 @@ def dataset_to_plate(conn, script_params, dataset_id, screen):
         if not image.getName().startswith('Well'):
             message += "Error: could not find 'Well' in image: "
             message += image.getName()
+            print("The dataset contains an image that does not start with",
+                  "'Well'. All images of the dataset must start with",
+                  "'Well' for this script to work.")
             return None, None, None, message
 
         # images are called something like: "WellB2_...."
@@ -171,6 +174,10 @@ def dataset_to_plate(conn, script_params, dataset_id, screen):
             if images_per_well != len(well_fovs[wellName]):
                 message += "Error: not all wells seem to " \
                            "have the same number of FOV"
+                print("The well", wellName, "has", len(well_fovs[wellName]),
+                      "images. But previous wells had", images_per_well,
+                      "images. Only wells with the same number of images",
+                      "are supported.")
                 return None, None, None, message
 
     # create a dictionary to match row letters with corresponding numbers
@@ -344,7 +351,7 @@ def run_script():
     """
     The main entry point of the script...
     """
-    print('started: run_script')
+
     data_types = [rstring('Dataset')]
     # n_wells = [rstring('24'), rstring('48'), rstring('96'), rstring('384')]
 
@@ -408,5 +415,4 @@ def run_script():
 
 
 if __name__ == "__main__":
-    print('started')
     run_script()
